@@ -8,8 +8,9 @@
 # - Teams Administrator
 # - Directory Writers
 # NB! Vil erstattes med app-basert autentisering i Azure
-$SPOAdminSite = "https://site-admin.sharepoint.com"
-$PnPSite = "https://site.sharepoint.com"
+# Variabler
+# Tenantnavn - eksempel https://$Tenant.sharepoint.com
+$Tenant = "Tenant navn"
 $TeamsPolicyName = "PolicyName"
 
 $365GroupDisplayName = 'Teknisk (G-602)'                                        # Styrer visningsnavn til Azure gruppe/Team
@@ -41,7 +42,7 @@ function connectionsCheck {
         Connect-AzureAD -Credential $svc -InformationAction SilentlyContinue -ErrorAction stop  | Out-Null
         Connect-ExchangeOnline -Credential $svc -InformationAction SilentlyContinue -ErrorAction stop -ShowBanner:$false | Out-Null
         Connect-MicrosoftTeams -Credential $svc -InformationAction SilentlyContinue -ErrorAction Stop | Out-Null
-        Connect-SPOService -Url $SPOAdminSite -Credential $svc | Out-Null
+        Connect-SPOService -Url "https://$Tenant-admin.sharepoint.com" -Credential $svc | Out-Null
         Write-Host -ForegroundColor green "Alle sesjoner etablert"
     }
 
@@ -123,7 +124,7 @@ function opprettEiningsTeam {
     Write-Host -ForegroundColor Cyan "Etablere kobling mot underliggende Sharepoint bibliotek"
     while ($True) {
         try {
-            $pnpConnection = Connect-PnPOnline -Url "$PnPSite/sites/$365GroupMailNickname" -Credentials $svc 
+            $pnpConnection = Connect-PnPOnline -Url "https://$Tenant.sharepoint.com/sites/$365GroupMailNickname" -Credentials $svc 
             break
         }
         catch {
@@ -222,6 +223,3 @@ function opprettEiningsTeam {
 }
 
 opprettEiningsTeam
- 
-
-
